@@ -1,0 +1,31 @@
+{
+  "id": "/MAP-LEARNING/",
+  "name": "Map Learning",
+  "short_name": "Map Learning",
+  "description": "Learn Vietnam's 63 provinces and China's 34 provincial-level units on a map made for your fingers.",
+  "lang": "en",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#cfe6f0",
+  "theme_color": "#cfe6f0",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

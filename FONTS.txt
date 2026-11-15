@@ -1,0 +1,22 @@
+Fonts used by Map Learning for China’s names
+==============================================
+
+The map labels and the table use Be Vietnam Pro (OFL.txt) for Vietnamese and English, and the two
+Noto Sans SC files below for Chinese characters and pinyin. The facts panel shows each Chinese name in
+the KaiTi (handwriting) style of AR PL UKai CN, the font Hanzi Grid prints its practice sheets with.
+All three are MODIFIED (cut-down) copies, made by make_cn_fonts.py from the full fonts kept in the
+Hanzi Grid repository (CHINESE-HANDWRITING-PRACTICE-1/fonts/source/). The same notice is written into
+each file’s "Description" name record.
+
+noto-sans-sc-400-subset.woff2
+  Modified version of Noto Sans SC for Map Learning: the Regular (400) weight of the variable font, reduced on 2026-11-15 with fontTools to 127 Chinese characters (China’s provinces, capitals and abbreviations) plus Latin, pinyin and punctuation; hinting removed; saved as WOFF2. Licensed under the SIL Open Font License 1.1 (see OFL-notosanssc.txt).
+
+noto-sans-sc-600-subset.woff2
+  Modified version of Noto Sans SC for Map Learning: the SemiBold (600) weight of the variable font, reduced on 2026-11-15 with fontTools to 127 Chinese characters (China’s provinces, capitals and abbreviations) plus Latin, pinyin and punctuation; hinting removed; saved as WOFF2. Licensed under the SIL Open Font License 1.1 (see OFL-notosanssc.txt).
+
+ukai-cn-subset.woff2
+  Modified version of AR PL UKai CN for Map Learning: reduced on 2026-11-15 with fontTools to 127 Chinese characters (China’s provinces, capitals and abbreviations); hinting removed; saved as WOFF2. Licensed under the Arphic Public License (see LICENSE-ukai.txt).
+
+Noto Sans SC: Copyright 2014-2021 Adobe (https://github.com/notofonts/noto-cjk), SIL Open Font License 1.1
+  (OFL-notosanssc.txt). The name does not use the Reserved Font Name "Source".
+AR PL UKai CN: Copyright 1999 Arphic Technology Co., Ltd., Arphic Public License (LICENSE-ukai.txt, unchanged).

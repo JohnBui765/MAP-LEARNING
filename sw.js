@@ -2,7 +2,7 @@
 // All the owner's apps share one origin (johnbui765.github.io), so this worker only ever opens or
 // deletes caches whose names start with PREFIX, and looks files up in its own cache only.
 const PREFIX = 'map-learning-';
-const VERSION = PREFIX + 'v1';
+const VERSION = PREFIX + 'v2';
 const ASSETS = [
   "./",
   "./index.html",
@@ -22,7 +22,10 @@ const ASSETS = [
   "./be-vietnam-pro-latin-400-italic.woff2",
   "./noto-sans-sc-400-subset.woff2",
   "./noto-sans-sc-600-subset.woff2",
-  "./ukai-cn-subset.woff2"
+  "./ukai-cn-subset.woff2",
+  "./pinyincheck.js",
+  "./pinyin.js",
+  "./extract.js"
 ];
 
 self.addEventListener('install', event => {

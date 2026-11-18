@@ -13,17 +13,28 @@ Address: **https://johnbui765.github.io/MAP-LEARNING/**
   whatever does not fit waits until you zoom in. Small provinces show their Atlat number.
 - **Made for fingers:** pinch, double-tap to zoom in, two-finger tap to zoom out, flick to
   glide. If a tap could mean more than one small province, the map zooms in instead of guessing.
-- **China's 34 provincial-level units** are drawn north of Vietnam, each labelled in Chinese
-  with its pinyin. Tap one for its name in Chinese, pinyin, Vietnamese and English, its
-  handwriting (KaiTi) form, capital, region and 2020 census population. The **Table** tab has a
-  Vietnam | China switch; the China table can be copied as a Hanzi Grid lesson list, to print
-  practice sheets of the names. The chip **China 34** flies to China. Practice rounds stay about
-  Vietnam's 63 provinces.
-- **The neighbourhood** (Laos, Cambodia, Thailand, Mongolia, Korea, the East Sea and beyond) is
-  drawn in general outline and fades into mist farther out. Hoàng Sa and Trường Sa are at their
-  true positions.
+- **China is the second country to learn**, in its six regions as the China Statistical Yearbook
+  groups them (North, Northeast, East, South Central, Southwest, Northwest) plus Hong Kong, Macau
+  and Taiwan. Every mode works for China: Daily review, Find it, Name it, Neighbours, Rebuild and
+  Sprint, with its own progress and personal bests. Names are **typed, as in Hanzi Drill**: the
+  pinyin with the tone keys under the box (ā á ǎ à mark the last syllable typed; tone numbers such
+  as guang3dong1 work too), or the characters, simplified or traditional. Right letters with wrong
+  tones show in orange and count as a miss. Tap a unit for its name in Chinese, pinyin, Vietnamese
+  and English, its handwriting (KaiTi) form, capital, region, area and 2020 census population.
+- **The country you learn is in colour, every other one in jade.** The chip at the end of the
+  region row (or the Vietnam | China switch in Table, Practice and Progress) changes which country
+  is learned. Vietnam and China swap: one in the Atlat colours, the other in eight tones of jade.
+  Region borders are drawn heavier for the country being learned.
+- **True size.** The map is drawn in an equal-area projection, so China is shown 29 times the size
+  of Vietnam, as it is (a Mercator map makes it look about 41 times). Zoom out to see all of China.
+- **The neighbourhood** within about 1,000 km (Laos, Cambodia, Thailand, Myanmar, India, Mongolia,
+  Russia, Korea, Japan and others) is drawn as shapes in jade with their capitals, and fades into
+  mist. The mist covers every pixel beyond, at every zoom, painted by the graphics chip. Hoàng Sa
+  and Trường Sa are at their true positions.
 
 The app is in English; province names are in Vietnamese, and China's names in Chinese with pinyin.
+Typed pinyin is checked by three files copied unchanged from Hanzi Drill (`pinyincheck.js`,
+`pinyin.js`, `extract.js`, which come from Hanzi Grid); to update them, copy them again.
 
 ## Put it online (GitHub Pages)
 
@@ -56,14 +67,16 @@ progress, and the old backup files are accepted.
 
 ## After editing any file
 
-Change `VERSION` at the top of `sw.js` (for example to `PREFIX + 'v2'`). Otherwise installed
+Change `VERSION` at the top of `sw.js` (for example to `PREFIX + 'v3'`). Otherwise installed
 copies keep showing the cached version.
 
 ## Rebuilding the map data
 
 The map data is embedded in `index.html`. `build_data.py` rebuilds it from
-`vietnam63-base.json` (the provinces), Natural Earth's countries (the neighbours, and Hong Kong,
-Macau and Taiwan) and Natural Earth's admin-1 layer (China's 31 mainland units):
+`vietnam63-base.json` (the provinces, stored in the old Mercator units and converted to the
+equal-area projection), Natural Earth's countries (the neighbours, and Hong Kong, Macau and
+Taiwan) and Natural Earth's admin-1 layer (China's 31 mainland units). It also gives every unit
+and country its jade tone and checks China's published areas against the drawn shapes:
 
 ```sh
 pip install shapely
@@ -73,8 +86,8 @@ python3 build_data.py package ne_50m_admin_1_states_provinces.geojson
 ```
 
 The Atlat table (regions, numbers, area, population) is written out in the script and checked
-against the table's region totals. China's table (names, pinyin, capitals, 2020 census) is
-`china_table.py`, which checks itself (`python3 china_table.py`): the 31 mainland figures add up
+against the table's region totals. China's table (names, pinyin, traditional spellings, capitals,
+areas, 2020 census) is `china_table.py`, which checks itself (`python3 china_table.py`): the 31 mainland figures add up
 to the census total, and every pinyin has one syllable per character. `make_splash.py
 icon-1024.png` remakes the iPhone launch screens.
 
@@ -94,15 +107,20 @@ from the full fonts kept in the Hanzi Grid repository with `make_cn_fonts.py` (n
 - Province codes: Decision 124/2004/QĐ-TTg. Boundary and status changes: Resolutions
   22/2003/QH11, 15/2008/QH12 and 175/2024/QH15. 2025 merger: Resolution 202/2025/QH15.
   Capitals: Atlat Địa lí Việt Nam.
-- Neighbouring countries: Natural Earth 1:50m (public domain), via world-atlas. Biển Đông is
-  labelled East Sea, the name Vietnam uses in English; it is also known internationally as
-  the South China Sea.
+- Neighbouring countries: Natural Earth 1:50m (public domain), via world-atlas, drawn as shapes
+  with their capitals. Biển Đông is labelled East Sea, the name Vietnam uses in English; it is
+  also known internationally as the South China Sea.
+- Projection: Albers equal-area conic on the sphere, standard parallels 20°N and 45°N, centred on
+  105°E; one world unit is about 0.62 km.
 - China's units: boundaries from Natural Earth 1:50m admin-1 (public domain), with Hong Kong,
   Macau and Taiwan from the country layer; trimmed to Vietnam's own boundaries along the border.
   Natural Earth draws borders as administered on the ground. Numbered and grouped as in the
   China Statistical Yearbook. Population: Seventh National Population Census, 1 November 2020
   (National Bureau of Statistics, Communiqué No. 3); Hong Kong, Macau and Taiwan at the end of
-  2020, as quoted there. Names: simplified Chinese, Hanyu Pinyin, the usual Hán-Việt names,
+  2020, as quoted there. Area: as published by each provincial government (Hong Kong, Macau and
+  Taiwan by their statistics offices); the drawn shapes agree within a few per cent, except
+  Ningxia, whose Natural Earth boundary is too small, and Macau. Names: simplified Chinese
+  (with traditional spellings accepted when typed), Hanyu Pinyin, the usual Hán-Việt names,
   GB/T 2260 codes.
 - Typefaces: Be Vietnam Pro, SIL Open Font License 1.1 (see `OFL.txt`); for Chinese, cut-down
   copies of Noto Sans SC (SIL Open Font License, `OFL-notosanssc.txt`) and AR PL UKai CN

@@ -132,6 +132,24 @@ NE_ISO = {
 NE_COUNTRY = {'81': '344', '82': '446', '71': '158'}
 # Neighbours that the two data sets cannot find by shared edges.
 EXTRA_NEIGHBOURS = [('44', '81'), ('44', '82')]
+# Area in km²: the figure each provincial government publishes (to the 10 km² most give); Hong Kong,
+# Macau and Taiwan from their own statistics offices. build_data.py measures the drawn shapes on the
+# equal-area map and reports any unit more than 10% away (Ningxia, whose Natural Earth boundary is too
+# small at this scale, and Macau, which is too small for it).
+AREA = {
+    '11': 16410, '12': 11966, '13': 188800, '14': 156700, '15': 1183000, '21': 148600, '22': 187400,
+    '23': 473000, '31': 6341, '32': 107200, '33': 105500, '34': 140100, '35': 124000, '36': 166900,
+    '37': 155800, '41': 167000, '42': 185900, '43': 211800, '44': 179700, '45': 237600, '46': 35400,
+    '50': 82400, '51': 486000, '52': 176200, '53': 394100, '54': 1228400, '61': 205600, '62': 425800,
+    '63': 722300, '64': 66400, '65': 1664900, '81': 1114, '82': 33, '71': 36197,
+}
+# Traditional-character spellings that differ from the simplified ones, so that a name typed on a
+# traditional keyboard is accepted too.
+TRADITIONAL = {
+    '15': ['內蒙古'], '21': ['遼寧'], '23': ['黑龍江'], '32': ['江蘇'], '37': ['山東'], '44': ['廣東'],
+    '45': ['廣西'], '50': ['重慶'], '52': ['貴州'], '53': ['雲南'], '61': ['陝西'], '62': ['甘肅'],
+    '64': ['寧夏'], '82': ['澳門'], '71': ['臺灣', '台灣'],
+}
 
 
 def units():
@@ -145,7 +163,7 @@ def units():
             'ab': [list(a) for a in ab], 'type': kind, 'typeEn': TYPES[kind]['en'], 'city': cap is None,
             'cap': cap[0] if cap else '', 'capPy': cap[1] if cap else '', 'capEn': cap[2] if cap else '', 'capVi': cap[3] if cap else '',
             'capLL': [cap[4], cap[5]] if cap else None,
-            'r': r, 'stt': i, 'pop': pop, 'note': note,
+            'r': r, 'stt': i, 'pop': pop, 'area': AREA[code], 'note': note, 'tw': TRADITIONAL.get(code, []),
         })
     return out
 
@@ -184,6 +202,7 @@ def check():
         if u['cap']: assert syllables(u['capPy']) == len(u['cap']), (u['cap'], u['capPy'])
         for ch, py in u['ab']: assert syllables(py) == 1, (ch, py)
     assert REGION_SPANS[-1][1] == 34
+    assert set(AREA) == {u['c'] for u in us}
     return us
 
 

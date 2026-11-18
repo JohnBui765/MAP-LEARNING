@@ -31,15 +31,18 @@ What it does
      31 mainland units from the admin-1 layer, Hong Kong, Macau and Taiwan from the country layer.
      Along the Vietnamese border they are trimmed and stretched to meet the app's own Vietnam.
      Their published areas (china_table.py) are checked against the drawn shapes.
-  5. The other countries within about 1,250 km of Vietnam and China are drawn as shapes only, each
-     with its capital and sometimes one more city. Beyond that the app shows only fog.
-  6. Every unit and country gets one of eight jade tones (used when it is not the country being
-     learned) so that no two neighbours share one, and China gets an even five-colouring in the
-     Atlat colours for when it is.
+  5. The map is one circle: the smallest that holds Vietnam (with its islands) and China, with a
+     little room, plus the band where the app's mist thickens. The other countries inside it are
+     drawn as grey shapes only, each with its capital and sometimes one more city. Beyond the circle
+     the app shows only fog, so nothing beyond it is drawn.
+  6. Every province of Vietnam and unit of China gets one of eight jade tones (used when its country
+     is not the one being learned) so that no two neighbours share one, and China gets an even
+     five-colouring in the Atlat colours for when it is.
 """
 import json, math, re, sys
 from pathlib import Path
 
+import shapely
 from shapely.geometry import LineString, MultiLineString, MultiPolygon, Point, Polygon, box
 from shapely.ops import polylabel, unary_union
 
@@ -76,6 +79,10 @@ def P(lon, lat):
     x, y = proj(lon, lat)
     return [round(x), round(y)]
 def from_merc(x, y): return proj(*m_to_ll(x, y))
+def m_ll_of_world(x, y):
+    """The lon/lat of a world point, to 0.1°, for messages."""
+    lo, la = min(((lo / 10, la / 10) for lo in range(800, 1300, 5) for la in range(0, 600, 5)), key=lambda q: math.dist(proj(*q), (x, y)))
+    return f'{lo:.1f}°E {la:.1f}°N'
 
 # ---------------------------------------------------------------- compact path codec
 # "M x yl dx dy dx dy ... z" with integer world units; negative numbers carry their own separator.
@@ -263,9 +270,9 @@ def topo_decode(path):
                       'arcs': [abs(i) if i >= 0 else ~i for P_ in polys for r in P_ for i in r]})
     return geoms, arcs
 
-# The map reaches about 1,250 km beyond Vietnam and China: the fog is solid by about 1,100 km,
-# so nothing further could ever be seen.
-VIS_KM = 1250
+# The clear circle reaches this far beyond the farthest point of Vietnam or China, and the mist then
+# thickens over MIST_KM; the data reaches a little past that.
+ROOM_KM, MIST_KM = 150, 600
 
 def to_polys(geom, min_area=0.0):
     """Each polygon as its list of rings (outer first, then holes), so the app can cull per polygon."""
@@ -515,11 +522,15 @@ def main(world_atlas_dir, admin1_path):
         r['bbox'] = [x0, y0, x1 - x0, y1 - y0]
     D['regions'] = REGIONS
 
-    # 4. The neighbourhood, within VIS_KM of Vietnam and China.
+    # 4. The neighbourhood, inside the circle.
     countries, arcs = topo_decode(Path(world_atlas_dir) / 'countries-50m.json')
     by_id = {c['id']: c for c in countries}
     vn_app = unary_union([Polygon(r).buffer(0) for p in D['provinces'] for r in parse_rings(p['d']) if len(r) >= 3])
-    vis = unary_union([vn_app, by_id['156']['geom']]).simplify(20).buffer(VIS_KM / KU, 8)
+    core = unary_union([vn_app, by_id['156']['geom'], by_id['158']['geom']])
+    circle = shapely.minimum_bounding_circle(core).centroid
+    cr = shapely.minimum_bounding_radius(core) + ROOM_KM / KU
+    print(f'circle: centre {m_ll_of_world(circle.x, circle.y)}, radius {cr * KU:,.0f} km')
+    vis = Point(circle.x, circle.y).buffer(cr + (MIST_KM + 60) / KU, 128)
     vn_ne = next(c for c in countries if c['name'] == 'Vietnam')
     others = [c for c in countries if c['name'] != 'Vietnam' and c['geom'].intersects(vis)]
     neigh = unary_union([c['geom'].intersection(vis) for c in others])
@@ -570,12 +581,11 @@ def main(world_atlas_dir, admin1_path):
             ln = LineString(arcs[a]).intersection(vis)
             border_lines.extend(to_lines(ln.simplify(1.5)))
 
-    # 5. Jade tones: one of eight for every province, unit and country, never shared by two
-    #    neighbours, so whichever country is being learned, the others read as a varied jade.
+    # 5. Jade tones: one of eight for every province and unit, never shared by two neighbours (also
+    #    across the border), for whichever of the two countries is not being learned.
     nodes, geo = [], {}
     for p in D['provinces']: nodes.append(('v', p['c'])); geo[('v', p['c'])] = unary_union([Polygon(r).buffer(0) for r in parse_rings(p['d']) if len(r) >= 3])
     for u in D['china']['units']: nodes.append(('c', u['c'])); geo[('c', u['c'])] = cgeoms[u['c']]
-    for c in out_countries: nodes.append(('x', c['id'])); geo[('x', c['id'])] = c['geom']
     nbj = {n: set() for n in nodes}
     for p in D['provinces']:
         for q in p['nb']: nbj[('v', p['c'])].add(('v', q))
@@ -593,9 +603,7 @@ def main(world_atlas_dir, admin1_path):
     jade = colouring(nodes, nbj, 8)
     for p in D['provinces']: p['jade'] = jade[('v', p['c'])]
     for u in D['china']['units']: u['jade'] = jade[('c', u['c'])]
-    for c in out_countries:
-        c['jade'] = jade[('x', c['id'])]
-        del c['geom'], c['id']
+    for c in out_countries: del c['geom'], c['id']
 
     # 6. Labels and decoration. Everything outside Vietnam uses standard English names; the sea
     #    Vietnam calls Biển Đông uses Vietnam's official English name, East Sea.
@@ -637,7 +645,7 @@ def main(world_atlas_dir, admin1_path):
         'china_snapshot': 'China’s 34 provincial-level units, numbered and grouped as in the China Statistical Yearbook',
         'china_stats': 'Population from the Seventh National Population Census, 1 November 2020 (NBS Communiqué No. 3); Hong Kong, Macau and Taiwan as quoted there. Areas as published by each provincial government and statistics office.',
         'china_boundaries': 'Natural Earth 1:50m admin-1 (public domain); Hong Kong, Macau and Taiwan from Natural Earth 1:50m countries',
-        'proj': ALB, 'vn_area': vn_area,
+        'proj': ALB, 'vn_area': vn_area, 'circle': [round(circle.x), round(circle.y), round(cr)], 'mist_km': MIST_KM,
         'country_bbox': [round(v) for v in country_box],
         'territory_bbox': [round(v) for v in tb],
         'extent': [math.floor(ex0), math.floor(ey0), math.ceil(ex1 - ex0), math.ceil(ey1 - ey0)],

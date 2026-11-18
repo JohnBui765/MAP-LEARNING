@@ -21,16 +21,17 @@ Address: **https://johnbui765.github.io/MAP-LEARNING/**
   as guang3dong1 work too), or the characters, simplified or traditional. Right letters with wrong
   tones show in orange and count as a miss. Tap a unit for its name in Chinese, pinyin, Vietnamese
   and English, its handwriting (KaiTi) form, capital, region, area and 2020 census population.
-- **The country you learn is in colour, every other one in jade.** The chip at the end of the
-  region row (or the Vietnam | China switch in Table, Practice and Progress) changes which country
-  is learned. Vietnam and China swap: one in the Atlat colours, the other in eight tones of jade.
-  Region borders are drawn heavier for the country being learned.
+- **The country you learn is in colour, the other in jade, every other country in grey.** The chip
+  at the end of the region row (or the Vietnam | China switch in Table, Practice and Progress)
+  changes which country is learned. Vietnam and China swap: one in the Atlat colours, the other in
+  eight tones of jade. Region borders are drawn heavier for the country being learned.
 - **True size.** The map is drawn in an equal-area projection, so China is shown 29 times the size
   of Vietnam, as it is (a Mercator map makes it look about 41 times). Zoom out to see all of China.
-- **The neighbourhood** within about 1,000 km (Laos, Cambodia, Thailand, Myanmar, India, Mongolia,
-  Russia, Korea, Japan and others) is drawn as shapes in jade with their capitals, and fades into
-  mist. The mist covers every pixel beyond, at every zoom, painted by the graphics chip. Hoàng Sa
-  and Trường Sa are at their true positions.
+- **The map is a circle** that holds Vietnam and China, centred near 106°E 32.5°N with a radius of
+  about 3,100 km. The countries inside it (Laos, Cambodia, Thailand, Myanmar, India, Mongolia,
+  Russia, Korea, Japan and others) are drawn as grey shapes with their capitals. Beyond its edge the
+  mist thickens and covers every pixel, at every zoom, painted by the graphics chip; zoomed right
+  out, you see the whole circle. Hoàng Sa and Trường Sa are at their true positions.
 
 The app is in English; province names are in Vietnamese, and China's names in Chinese with pinyin.
 Typed pinyin is checked by three files copied unchanged from Hanzi Drill (`pinyincheck.js`,
@@ -75,8 +76,8 @@ copies keep showing the cached version.
 The map data is embedded in `index.html`. `build_data.py` rebuilds it from
 `vietnam63-base.json` (the provinces, stored in the old Mercator units and converted to the
 equal-area projection), Natural Earth's countries (the neighbours, and Hong Kong, Macau and
-Taiwan) and Natural Earth's admin-1 layer (China's 31 mainland units). It also gives every unit
-and country its jade tone and checks China's published areas against the drawn shapes:
+Taiwan) and Natural Earth's admin-1 layer (China's 31 mainland units). It also finds the map's circle, gives
+every province and unit its jade tone and checks China's published areas against the drawn shapes:
 
 ```sh
 pip install shapely

@@ -17,6 +17,39 @@ Address: **https://johnbui765.github.io/MAP-LEARNING/**
   controls: the top card, the region chips, the zoom and ⤢ buttons and the tab bar. The map, its
   taps and its cards keep working, and a practice question stays on screen. Tap the eye again, now
   in the bottom right corner, to bring the controls back.
+- **Coordinates**, as in HCMC Map. In Learn, the crosshair button above the eye opens one card:
+  - **One box.** Type a coordinate as Apple Maps shows it (`10,77252° N, 106,69802° E`; dots, either
+    order, or degrees, minutes and seconds as the Compass app shows them, work too), or paste an AI's
+    whole reply (below). **Show** puts your red dot there ("you", the anchor), flies to about 150 km
+    around it and names where it is: the province of the 63, with what it became on 1 July 2025 if it
+    was merged (*Bình Dương (since 2025 in Hồ Chí Minh City)*), China's unit, a neighbouring country,
+    or the sea. **Save place** keeps the point in your list instead, without moving the red dot (with an
+    empty box it saves the red dot itself). The point must lie inside the map's circle.
+  - **Saved places, in tags.** Make tags with a name and one of eight colours (red is kept for your
+    dot), for example Travel. Each place shows its distance and compass bearing from your red dot
+    (`1,144 km · 175° S`). Tap a place, in the list or on the map, and the map shows it and your red
+    dot together, joined by a dashed line. Each tag has an eye button to show or hide its places on the
+    map; tap a tag's name to rename it, change its colour or delete it. Up to 20 tags and 500 places.
+  - **Highlight:** the picked place is marked with **Ping** (rings), **Glow** (a soft halo) or
+    **Reticle** (a ring with ticks and a distance-and-bearing readout), whichever you choose in the
+    card. It settles after 10 seconds, and is still from the start with Reduce Motion.
+  - **Export / Import.** Export makes a `.json` file of your tags and places (never the red dot); on
+    the iPhone it opens the Share sheet. Import adds the places from such a file, from a full backup,
+    or from HCMC Map's own places file or backup; it matches tags by name and skips places already
+    there or off this map.
+  - **Ask an AI about a place.** Type a place and tap Copy prompt (or Share the prompt… on the
+    iPhone), send it to any AI app, copy its whole reply and paste it in the box. The prompt asks for
+    five lines (PLACE, COORDINATES, ADDRESS, NOTE, SOURCE); the box finds the coordinates even with
+    markdown, bullets, a code block or Chinese field names, and refuses a point outside the map. An
+    AI's coordinates can be off, sometimes by kilometres.
+  - **Show markers / Hide markers.** The red dot and your saved places show on the map only when
+    switched on (off by default; showing or saving a point switches them on). Never in Practice.
+  - **How exact.** Distances are measured along the Earth's surface (within about 0.5%) and bearings
+    from true north. On this map north leans away from straight up, by less than 2.5° across Vietnam
+    and up to about 18° at the circle's east and west edges. The borders are drawn to about 0.7 km and
+    the closest zoom is about 40 m a pixel, so a place within about 1 km of a border or the coast can
+    show in the province next door, and places closer than about 400 m overlap.
+  - Your red dot, tags and places are kept on your phone only (and in your backup file).
 - **Light only.** The map stays light even when the phone or the browser is set to dark mode.
 - **China is the second country to learn**, in its six regions as the China Statistical Yearbook
   groups them (North, Northeast, East, South Central, Southwest, Northwest) plus Hong Kong, Macau
@@ -62,7 +95,7 @@ exactly as above.
 - **Laptop:** open the link in Chrome or Edge and click the install icon in the address bar.
 
 After the first visit it works without internet. A phone that has an older version installed picks
-up this one the next time the app is opened online (the cache is now `map-learning-v4`); progress is
+up this one the next time the app is opened online (the cache is now `map-learning-v5`); progress is
 kept. iOS keeps the launch screen it saved when the app was added (a dark one, if the phone was in
 dark mode then). To replace it, first back up your progress (Progress, then Details), then remove
 the app from the Home Screen, add it again and restore: removing the app can erase what it saved.
@@ -76,7 +109,7 @@ progress, and the old backup files are accepted.
 
 ## After editing any file
 
-Change `VERSION` at the top of `sw.js` (for example to `PREFIX + 'v5'`). Otherwise installed
+Change `VERSION` at the top of `sw.js` (for example to `PREFIX + 'v6'`). Otherwise installed
 copies keep showing the cached version.
 
 ## Rebuilding the map data
@@ -116,6 +149,8 @@ from the full fonts kept in the Hanzi Grid repository with `make_cn_fonts.py` (n
 - Province codes: Decision 124/2004/QĐ-TTg. Boundary and status changes: Resolutions
   22/2003/QH11, 15/2008/QH12 and 175/2024/QH15. 2025 merger: Resolution 202/2025/QH15.
   Capitals: Atlat Địa lí Việt Nam.
+- Coordinates: only what you type or paste (or an AI you ask gives you); the app itself sends
+  nothing anywhere.
 - Neighbouring countries: Natural Earth 1:50m (public domain), via world-atlas, drawn as shapes
   with their capitals. Biển Đông is labelled East Sea, the name Vietnam uses in English; it is
   also known internationally as the South China Sea.

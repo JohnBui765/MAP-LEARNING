@@ -306,6 +306,49 @@ table.stats { width: 100%; border-collapse: collapse; font-variant-numeric: tabu
 .clean #chips, .clean #zoom, .clean #zfit, .clean nav.tabs, .clean #slip:not(.q) { display: none !important; }
 .clean #cleanw { bottom: calc(env(safe-area-inset-bottom, 0px) + 14px); opacity: .62; }
 .clean #cleanw:hover, .clean #cleanw:focus-within { opacity: 1; }
+/* ---------- Coordinates: a button above the eye (Learn only), a box, your red dot and saved places in tags ---------- */
+#coordw { bottom: calc(var(--tabs-h, 60px) + var(--chips-h, 0px) + 230px); }
+@media (max-height: 500px) { #coordw { bottom: calc(var(--tabs-h, 60px) + var(--chips-h, 0px) + 210px); } }
+.clean #coordw, html:not([data-view="learn"]) #coordw { display: none !important; }
+#coordForm { align-items: flex-start; }
+#coordIn { flex: 1; min-width: 0; min-height: 44px; max-height: 38vh; padding: 10px 12px; border: 0; border-radius: 12px; background: var(--fill); color: var(--ink); font: inherit; font-size: 16px; line-height: 1.35; resize: none; overflow-y: auto; }
+.subform { margin-top: 10px; padding: 10px; border-radius: 14px; background: var(--fill); }
+.subform .answer { margin-top: 0; }
+.subform .answer input { background: var(--surface); }
+.pick { flex: 1; min-width: 0; min-height: 44px; padding: 0 10px; border: 0; border-radius: 12px; background: var(--surface); color: var(--ink); font: inherit; font-size: 16px; }
+.loc { display: flex; gap: 10px; align-items: center; }
+.loc .small { display: block; }
+.tagrow { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+.tagname { flex: 1; min-height: 36px; padding: 0; border: 0; background: none; color: var(--ink); font: inherit; font-weight: 700; text-align: left; }
+.sw8 { flex: none; width: 14px; height: 14px; border-radius: 50%; box-shadow: 0 0 0 2px #fff, 0 0 0 2.5px var(--hair); }
+.x.eye svg { width: 17px; height: 17px; }
+.prow { display: flex; align-items: center; gap: 6px; margin: 6px 0 0 22px; }
+.pgo { flex: 1; min-width: 0; display: flex; gap: 10px; align-items: flex-start; padding: 8px 10px; border: 0; border-radius: 12px; background: var(--fill); color: var(--ink); font: inherit; text-align: left; }
+.pgo .grow > * { display: block; overflow-wrap: anywhere; }
+.sw6 { flex: none; width: 10px; height: 10px; margin-top: 6px; border-radius: 50%; }
+.palette { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+.swatch { width: 34px; height: 34px; border: 0; border-radius: 50%; box-shadow: 0 0 0 2px #fff; }
+.swatch[aria-pressed="true"] { box-shadow: 0 0 0 2px #fff, 0 0 0 4.5px var(--ink); }
+.fxrow { display: flex; align-items: center; gap: 10px; margin-top: 2px; }
+.fxrow .seg { margin-top: 0; }
+/* The picked place's highlight: Ping, Glow or Reticle, in its tag's colour */
+#hlsvg { overflow: visible; pointer-events: none; }
+#hl * { transform-box: fill-box; transform-origin: center; }
+#hl .ring { fill: none; stroke-width: 2; vector-effect: non-scaling-stroke; opacity: 0; animation: hlPing 1.5s cubic-bezier(.2, .6, .4, 1) infinite; }
+#hl .ring.r2 { animation-delay: .5s; }
+#hl .ring.r3 { animation-delay: 1s; }
+@keyframes hlPing { 0% { transform: scale(1); opacity: .9; } 100% { transform: scale(4.4); opacity: 0; } }
+#hl .glow { animation: hlGlow 2.2s ease-in-out infinite alternate; }
+@keyframes hlGlow { from { transform: scale(.8); opacity: .35; } to { transform: scale(1.35); opacity: .85; } }
+#hl .spin { animation: hlSpin 9s linear infinite; }
+@keyframes hlSpin { to { transform: rotate(360deg); } }
+#hl .lock { animation: hlLock .4s cubic-bezier(.2, .8, .3, 1) both; }
+@keyframes hlLock { from { transform: scale(1.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+#hl .read { font: 600 11px "Be Vietnam Pro", system-ui, sans-serif; fill: var(--ink); stroke: #fff; stroke-width: 3; paint-order: stroke; text-anchor: middle; }
+#hl.rest * { animation: none !important; }
+#hl.rest .ring { opacity: 0; }
+#hl.rest .ring.r1 { opacity: .55; transform: scale(2); }
+#hl.rest .glow { opacity: .6; transform: scale(1.1); }
 @media (prefers-reduced-motion: reduce) {
   .sheet, #scrim, #toast, #fog, #fogGL { transition: none; }
   #fogB { animation: none; }
@@ -316,7 +359,7 @@ table.stats { width: 100%; border-collapse: collapse; font-variant-numeric: tabu
 <body>
 <div id="stage" role="img" aria-label="Map of Vietnam's 63 provinces and China's 34 provincial-level units">
   <canvas id="back"></canvas>
-  <div id="live"><canvas id="mapc"></canvas><svg id="fx" aria-hidden="true" style="display:none"><g id="fxw"></g></svg></div>
+  <div id="live"><canvas id="mapc"></canvas><svg id="fx" aria-hidden="true" style="display:none"><g id="fxw"></g></svg><svg id="hlsvg" aria-hidden="true" style="display:none"><defs><filter id="hlBlur" x="-1" y="-1" width="3" height="3"><feGaussianBlur stdDeviation="5"/></filter></defs><g id="hl"></g></svg></div>
   <div id="fog" class="pending"><canvas id="fogA"></canvas><canvas id="fogB"></canvas></div>
   <canvas id="fogGL" class="pending" aria-hidden="true"></canvas>
 </div>
@@ -329,6 +372,7 @@ table.stats { width: 100%; border-collapse: collapse; font-variant-numeric: tabu
 </div>
 <div id="zfit" class="ctrl material"><button type="button" id="zfitb" aria-label="Show the whole area"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 7.5v-4h4M16.5 7.5v-4h-4M3.5 12.5v4h4M16.5 12.5v4h-4"/></svg></button></div>
 <div id="cleanw" class="ctrl material"><button type="button" id="clean" aria-pressed="false" aria-label="Clean view" title="Hide the controls"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 10s2.8-5 7.5-5 7.5 5 7.5 5-2.8 5-7.5 5-7.5-5-7.5-5Z"/><circle cx="10" cy="10" r="2.3"/><path d="M3.5 16.5 16.5 3.5"/></svg></button></div>
+<div id="coordw" class="ctrl material"><button type="button" id="coordb" aria-label="Coordinates" title="Coordinates"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><path d="M10 1.8v3.6M10 14.6v3.6M1.8 10h3.6M14.6 10h3.6"/><circle cx="10" cy="10" r="1.4" fill="currentColor" stroke="none"/></svg></button></div>
 <div id="chips" role="toolbar" aria-label="Regions"></div>
 <nav class="tabs material" role="tablist" aria-label="Sections">
   <button type="button" class="tab" role="tab" id="tab-learn" aria-selected="true"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M9.5 4.5 3.5 7v14.5l6-2.5 7 2.5 6-2.5V4.5l-6 2.5-7-2.5Z"/><path d="M9.5 4.5V19M16.5 7v14.5"/></svg><span>Learn</span></button>
@@ -350,7 +394,7 @@ table.stats { width: 100%; border-collapse: collapse; font-variant-numeric: tabu
    Sections:
    1 data · 2 storage · 3 map layers · 4 drawing · 5 labels · 6 fog
    7 camera · 8 gestures · 9 painting · 10 spaced repetition · 11 UI helpers
-   12 Learn, Table and Progress · 13 practice sessions · 14 rebuild · 15 sprint · 16 start-up
+   12 Learn, Table and Progress · 12b coordinates · 13 practice sessions · 14 rebuild · 15 sprint · 16 start-up
 
    Smoothness: nothing is redrawn while a finger is down or the map is moving.
    The map is three finished bitmaps that the GPU only slides and scales — a soft
@@ -509,12 +553,12 @@ focus = store.set.focus === 'cn' ? 'cn' : 'vn';
 
 /* ---------- 3. Map layers ----------
    #back  low-resolution bitmap of the whole drawn window, placed in world units
-   #live  sharp canvas (screen plus a margin) and an SVG for flashes and tap marks,
+   #live  sharp canvas (screen plus a margin), an SVG for flashes and tap marks and one for the picked place,
           drawn for the camera "com"; while the camera moves it is scaled to follow
    #fog   two low-resolution fog bitmaps (only when WebGL is missing)
    #fogGL the fog, painted by the graphics chip over the whole screen (section 6) */
 const $ = id => document.getElementById(id);
-const stage = $('stage'), backC = $('back'), live = $('live'), mapC = $('mapc'), fxSvg = $('fx'), fxG = $('fxw');
+const stage = $('stage'), backC = $('back'), live = $('live'), mapC = $('mapc'), fxSvg = $('fx'), fxG = $('fxw'), hlSvg = $('hlsvg'), hlG = $('hl');
 const fogW = $('fog'), fogA = $('fogA'), fogB = $('fogB');
 const NS = 'http://www.w3.org/2000/svg';
 function mk(tag, attrs, parent) {
@@ -666,7 +710,7 @@ function sizeLive() {
   Object.assign(live.style, { left: -pad.x + 'px', top: -pad.y + 'px', width: W + 'px', height: H + 'px', transformOrigin: `${pad.x}px ${pad.y}px` });
   mapC.width = Math.round(W * dpr); mapC.height = Math.round(H * dpr);
   mapC.style.width = W + 'px'; mapC.style.height = H + 'px';
-  fxSvg.setAttribute('width', W); fxSvg.setAttribute('height', H);
+  fxSvg.setAttribute('width', W); fxSvg.setAttribute('height', H); hlSvg.setAttribute('width', W); hlSvg.setAttribute('height', H);
   if (fogGL) fogGL.size();
 }
 
@@ -777,6 +821,7 @@ function renderMain() {
   const L = layoutLabels();
   drawDots(mctx, L.dots);
   drawLabels(mctx, L.labels);
+  updateHL();
 }
 
 /* ---------- 5. Labels: placed so that none overlap; what doesn't fit waits for more zoom ---------- */
@@ -790,6 +835,8 @@ const F = {
 // Chinese names and pinyin come from the cut-down Noto Sans SC, so they look the same everywhere.
 const CNFONT = '"Noto Sans SC", "Be Vietnam Pro", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif';
 F.zh = s => `600 ${s}px ${CNFONT}`; F.py = `400 11px ${CNFONT}`; F.capZh = `400 11.5px ${CNFONT}`;
+// Your saved places' names; Chinese characters the cut-down Noto Sans SC lacks come from the phone's own fonts.
+F.place = '600 11px "Be Vietnam Pro", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif';
 const measure = document.createElement('canvas').getContext('2d');
 const widths = new Map();
 function textW(t, font, ls = 0) {
@@ -825,6 +872,32 @@ function layoutLabels() {
     ({ t, font, x, y, align, fill, halo, h: size * 1.25, w: textW(t, font, extra && extra.ls || 0), ...extra });
   const put = (L, force) => { const b = boxOf(L); if (!force && !free(b)) return false; taken.push(b); labels.push(L); return true; };
   const putAll = (Ls, force) => { const bs = Ls.map(boxOf); if (!force && !bs.every(free)) return false; taken.push(...bs); labels.push(...Ls); return true; };
+
+  // Your red dot and saved places (Learn only, with the markers on; section 12b): names step around
+  // them, a place's own name shows where it fits (the picked one's always), and they are drawn last.
+  const marks = [];
+  if (view === 'learn' && !session && store.set.marks) {
+    const dw = store.dot ? proj(store.dot[1], store.dot[0]) : null, rx = dw && X(dw[0]), ry = dw && Y(dw[1]), dotOn = !!dw && onCanvas(rx, ry), picked = [];
+    if (dotOn) taken.push([rx - 10, ry - 10, rx + 10, ry + 10]);
+    const sq = selPlace && store.places.find(q => q.id === selPlace), st = sq && tagOf(sq);
+    if (st && !st.hidden) {               // room for the picked place's highlight (and the Reticle's readout)
+      const pw = proj(sq.lon, sq.lat), x = X(pw[0]), y = Y(pw[1]);
+      taken.push([x - 26, y - 26, x + 26, y + 26]);
+      if (dw && store.set.fx === 'reticle') { const d = myDot(), h = textW(`${fmtKm(kmBetween(d, sq))} · ${Math.round(bearing(d, sq))}°`, F.place) / 2 + 3; taken.push([x - h, y - 43, x + h, y - 25]); }
+    }
+    let line = null;
+    for (const q of store.places) {
+      const t = tagOf(q); if (!t || t.hidden) continue;
+      const pw = proj(q.lon, q.lat), x = X(pw[0]), y = Y(pw[1]), sel = q.id === selPlace;
+      if (sel && dw) line = { kind: 'line', x1: rx, y1: ry, x2: x, y2: y };
+      if (!onCanvas(x, y)) continue;
+      taken.push([x - 7, y - 7, x + 7, y + 7]); (sel ? picked : marks).push({ x, y, kind: 'place', c: t.c, sel });
+      put(make(q.n, F.place, 11, x + 9, y, 'left', V.ink, V.paper), sel);
+    }
+    if (line) marks.unshift(line);
+    marks.push(...picked);
+    if (dotOn) marks.push({ x: rx, y: ry, kind: 'dot' });
+  }
 
   // Capital dots. Where the province is big enough on screen for its capital's name, the dot is
   // an obstacle that province names must step around. Smaller provinces' dots give way to names.
@@ -929,10 +1002,26 @@ function layoutLabels() {
     const a = TROPIC[ti - 1], b = TROPIC[ti], ty = Y(a[1] + (tx - a[0]) / (b[0] - a[0]) * (b[1] - a[1])) - 9;
     if (ty > y0 && ty < y1) put(make('Tropic of Cancer', F.water, 12.5, Math.max(x0, 0) + 14, ty, 'left', V.seaInk, null));
   }
-  return { labels, dots };
+  return { labels, dots: marks.length ? dots.concat(marks) : dots };
 }
 function drawDots(ctx, dots) {
   for (const d of dots) {
+    if (d.kind === 'line') {            // from the red dot to the picked place
+      ctx.save(); ctx.setLineDash([6, 5]); ctx.lineWidth = 2; ctx.strokeStyle = '#e5484d'; ctx.globalAlpha = .9;
+      ctx.beginPath(); ctx.moveTo(d.x1, d.y1); ctx.lineTo(d.x2, d.y2); ctx.stroke(); ctx.restore();
+      continue;
+    }
+    if (d.kind === 'place') {           // a saved place, in its tag's colour
+      ctx.beginPath(); ctx.arc(d.x, d.y, d.sel ? 7 : 5.2, 0, Math.PI * 2); ctx.fillStyle = d.c; ctx.fill();
+      ctx.lineWidth = d.sel ? 2.4 : 1.8; ctx.strokeStyle = '#fff'; ctx.stroke();
+      continue;
+    }
+    if (d.kind === 'dot') {             // your red dot
+      ctx.beginPath(); ctx.arc(d.x, d.y, 11, 0, Math.PI * 2); ctx.fillStyle = 'rgba(229, 72, 77, .22)'; ctx.fill();
+      ctx.beginPath(); ctx.arc(d.x, d.y, 6, 0, Math.PI * 2); ctx.fillStyle = '#e5484d'; ctx.fill();
+      ctx.lineWidth = 2.2; ctx.strokeStyle = '#fff'; ctx.stroke();
+      continue;
+    }
     ctx.beginPath(); ctx.arc(d.x, d.y, d.kind === 'cap' ? 3.2 : 2.8, 0, Math.PI * 2);
     if (d.kind === 'cap') { ctx.fillStyle = V.cap; ctx.fill(); ctx.lineWidth = 1.2; ctx.strokeStyle = V.paper; ctx.stroke(); }
     else { ctx.fillStyle = V.paper; ctx.fill(); ctx.lineWidth = 1.4; ctx.strokeStyle = V.muted; ctx.stroke(); }
@@ -1525,6 +1614,11 @@ function tapIsAnswer() {
   return !(session.cur && (session.cur.type === 'meet' || session.cur.type === 'name'));
 }
 function handleMapTap(w) {
+  if (view === 'learn' && !session && store.set.marks) {
+    const hit = placeAt(w);
+    if (hit) return selectPlace(hit.id);
+    if (selPlace) { selPlace = null; invalidate(); }
+  }
   const sx = cam.x + cam.k * w[0], sy = cam.y + cam.k * w[1];
   let code = provinceAt(w);
   if (code && !inFocus(code)) {
@@ -1797,6 +1891,7 @@ function cnFactsHTML(p) {
 let view = 'learn', learnRegion = null, session = null, selected = null;
 function setTab(t) {
   ['learn', 'table', 'practice', 'progress'].forEach(x => $('tab-' + x).setAttribute('aria-selected', String(x === t)));
+  document.documentElement.dataset.view = t;
 }
 $('tab-learn').onclick = () => { endSession(true); showLearn(); };
 $('tab-table').onclick = () => { if (session) return toast('Finish or close the round first'); showTable(); };
@@ -1968,7 +2063,7 @@ function backup() {
 }
 function restore() {
   const i = document.createElement('input'); i.type = 'file'; i.accept = 'application/json,.json';
-  i.onchange = () => { const f = i.files[0]; if (!f) return; f.text().then(t => { const s = migrate(JSON.parse(t)); if (!s || !s.srs) throw 0; store = { ...store, ...s, set: { ...DEFAULT_SET, ...(s.set || {}) } }; save(); closeSheet(); showProgress(); toast('Progress restored'); }).catch(() => toast('That file is not a Map Learning backup')); };
+  i.onchange = () => { const f = i.files[0]; if (!f) return; f.text().then(t => { const s = migrate(JSON.parse(t)); if (!s || !s.srs) throw 0; store = { ...store, ...s, set: { ...DEFAULT_SET, ...(s.set || {}) } }; cleanPlaces(); selPlace = null; save(); closeSheet(); showProgress(); toast('Progress restored'); }).catch(() => toast('That file is not a Map Learning backup')); };
   i.click();
 }
 function showSources() {
@@ -1985,9 +2080,367 @@ function showSources() {
   <p><b>Population:</b> the Seventh National Population Census of 1 November 2020 (National Bureau of Statistics, Communiqué No. 3). The figures for Hong Kong, Macau and Taiwan are the end-of-2020 figures from their own statistics offices, as quoted in that communiqué.</p>
   <p><b>Boundaries:</b> Natural Earth 1:50m (public domain): the admin-1 layer for the 31 mainland units, the country layer for Hong Kong, Macau and Taiwan. Along the Vietnamese border the units were trimmed to the Vietnamese boundaries above. Natural Earth draws borders as administered on the ground. Hoàng Sa and Trường Sa stay with Đà Nẵng and Khánh Hòa.</p>
   <p><b>Names:</b> simplified Chinese with Hanyu Pinyin, the usual Hán-Việt names, and the GB/T 2260 codes. Pinyin was checked with Hanzi Grid’s syllable splitter. Typed pinyin is graded by Hanzi Drill’s checker (letters and tones apart).</p>
+  <h3>Coordinates</h3>
+  <p>The Coordinates card (the crosshair above the eye, in Learn) reads a coordinate as Apple Maps writes it (10,77252° N, 106,69802° E), with dots, in either order, or in degrees, minutes and seconds as the Compass app shows them, and an AI’s reply to the prompt it writes; the app itself sends nothing anywhere. A point must lie inside the map’s circle. Distances are measured along the Earth’s surface (within about 0.5%) and bearings from true north; on this map north leans away from straight up, by less than 2.5° across Vietnam and up to about 18° at the circle’s east and west edges. The borders are drawn to about 0.7 km, so a place within about 1 km of a border or the coast can show in the province next door. Your red dot, tags and places are kept on this device only (and in your backup file); Export makes a .json file of the tags and places (not the red dot), and Import adds the places from such a file, from a backup, or from HCMC Map.</p>
   <p><b>Typefaces:</b> Be Vietnam Pro (SIL Open Font License); for Chinese, cut-down copies of Noto Sans SC (SIL Open Font License) and AR PL UKai CN (Arphic Public License), see FONTS.txt.</p>`, true);
   sheetBody.querySelector('[data-close]').onclick = progressDetails;
 }
+
+/* ---------- 12b. Coordinates: your red dot and saved places, in tags ----------
+   As in HCMC Map. A coordinate typed or pasted (or an AI's reply) puts the red dot there ("you": every
+   place is measured from it), or is saved as a place under a tag you name and colour. They show on the
+   map in Learn only, once the markers are on, and never in a practice round. They are kept in the same
+   record as the progress, so the backup file holds them too. */
+const PALETTE = ['#1d6a98', '#2e8b57', '#d9822b', '#7b4fc4', '#c2417a', '#0e8f8f', '#8a5a2b', '#3f4b57'];   // red is kept for the dot
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+let selPlace = null;                   // the saved place picked: a dashed line joins it to the red dot
+const tagOf = q => store.tags.find(t => t.id === q.tag);
+function ensureTag() { if (!store.tags.length) store.tags.push({ id: uid(), n: 'Saved', c: PALETTE[0], hidden: false }); return store.tags[0]; }
+// Run on load, after Restore and when the card opens: ids are plain (they go into the page), colours
+// come from the palette, and a damaged file can't break the map.
+function cleanPlaces() {
+  const okId = x => typeof x === 'string' && /^[\w-]{1,40}$/.test(x), remap = new Map();
+  const tags = Array.isArray(store.tags) ? store.tags : [], places = Array.isArray(store.places) ? store.places : [];
+  store.tags = tags.filter(t => t && typeof t.n === 'string' && t.n.trim()).slice(0, 20).map(t => {
+    const id = okId(t.id) ? t.id : uid(); if (id !== t.id) remap.set(t.id, id);
+    return { id, n: t.n.trim().slice(0, 24), c: PALETTE.includes(t.c) ? t.c : PALETTE[0], hidden: !!t.hidden };
+  });
+  store.places = places.filter(q => q && typeof q.n === 'string' && Number.isFinite(q.lat) && Number.isFinite(q.lon)).slice(0, 500)
+    .map(q => ({ id: okId(q.id) ? q.id : uid(), n: (q.n.trim() || 'Place').slice(0, 60), lat: q.lat, lon: q.lon, tag: remap.has(q.tag) ? remap.get(q.tag) : q.tag, note: typeof q.note === 'string' ? q.note.slice(0, 200) : '', at: typeof q.at === 'string' ? q.at.slice(0, 10) : '' }));
+  if (store.dot && !(Array.isArray(store.dot) && store.dot.length === 2 && store.dot.every(Number.isFinite))) store.dot = null;
+  if (!store.dot || (store.dotInfo && (typeof store.dotInfo !== 'object' || typeof store.dotInfo.n !== 'string'))) store.dotInfo = null;
+  if (store.dotInfo && typeof store.dotInfo.note !== 'string') store.dotInfo.note = '';
+  if (store.places.some(q => !tagOf(q))) { const t = ensureTag(); store.places.forEach(q => { if (!tagOf(q)) q.tag = t.id; }); }
+  if (selPlace && !store.places.some(q => q.id === selPlace)) selPlace = null;
+}
+cleanPlaces();
+// Distance along the Earth's surface (great circle), in km; and the compass bearing from a to b,
+// in degrees clockwise from true north.
+const kmBetween = (a, b) => {
+  const r = Math.PI / 180, h = Math.sin((b.lat - a.lat) * r / 2) ** 2 + Math.cos(a.lat * r) * Math.cos(b.lat * r) * Math.sin((b.lon - a.lon) * r / 2) ** 2;
+  return 2 * 6371.0088 * Math.asin(Math.sqrt(h));
+};
+const bearing = (a, b) => {
+  const r = Math.PI / 180, dl = (b.lon - a.lon) * r;
+  return (Math.atan2(Math.sin(dl) * Math.cos(b.lat * r), Math.cos(a.lat * r) * Math.sin(b.lat * r) - Math.sin(a.lat * r) * Math.cos(b.lat * r) * Math.cos(dl)) / r + 360) % 360;
+};
+// A coordinate in any common form: "10,77252° N, 106,69802° E" as Apple Maps writes it, dots,
+// either order, degrees and minutes (and seconds) as the Compass app shows them, or plain numbers.
+// Remarks in brackets and stray numbers beside a pair of decimals are ignored. Everywhere inside the
+// map's circle the longitude is at least 26° more than the latitude, so the smaller number is the latitude.
+function readCoord(text) {
+  const t = String(text).replace(/\([^)]*\)/g, ' ').replace(/[′’‘`]/g, "'").replace(/''/g, '"').replace(/[″“”]/g, '"');
+  const T = [...t.matchAll(/(-?)(\d+(?:[.,]\d+)?)\s*([°º˚'"]?)/g)].map(m => ({
+    v: parseFloat(m[2].replace(',', '.')), dec: /[.,]/.test(m[2]), sym: m[3] === 'º' || m[3] === '˚' ? '°' : m[3],
+    neg: m[1] === '-' && (m.index === 0 || /[\s,;:]/.test(t[m.index - 1])) }));
+  const deg = i => {                    // degrees with °, then minutes ' and seconds " if they follow
+    let v = T[i].v, j = i + 1;
+    if (T[j] && T[j].sym === "'") {
+      if (T[j].v >= 60) return null; v += T[j].v / 60; j++;
+      if (T[j] && (T[j].sym === '"' || (!T[j].sym && T[j].v < 60 && (!T[j + 1] || T[j + 1].sym === '°')))) { if (T[j].v >= 60) return null; v += T[j].v / 3600; j++; }
+    }
+    return { v, j, neg: T[i].neg };
+  };
+  let a = null, b = null;
+  const i0 = T.findIndex((x, i) => x.sym === '°' && T[i + 1] && T[i + 1].sym === "'");
+  if (i0 >= 0) {                        // degrees and minutes (and seconds)
+    a = deg(i0); const i1 = a ? T.findIndex((x, i) => i >= a.j && x.sym === '°') : -1; b = i1 >= 0 ? deg(i1) : null;
+  } else {
+    const i = T.findIndex((x, k) => x.dec && T[k + 1] && T[k + 1].dec);
+    if (i >= 0) { a = { v: T[i].v, neg: T[i].neg }; b = { v: T[i + 1].v, neg: T[i + 1].neg }; }   // a pair of decimals
+    else if ([2, 4, 6].includes(T.length) && !T.some(x => x.sym)) {                                // plain numbers
+      const h = T.length / 2, part = k => T.slice(k * h, k * h + h);
+      if ([0, 1].every(k => part(k).slice(1).every(x => x.v < 60))) [a, b] = [0, 1].map(k => ({ v: part(k).reduce((s, x, n) => s + x.v / 60 ** n, 0), neg: part(k)[0].neg }));
+    }
+  }
+  if (!a || !b) return null;
+  let lat = a.v, lon = b.v;
+  if (lat > lon) [lat, lon] = [lon, lat];                            // here the latitude is always the smaller
+  return { lat, lon, off: a.neg || b.neg || /(^|[\s\d°'"])[SW](?=$|[\s,;.])/.test(t) || /南[纬緯]|西[经經]/.test(t) };   // south or west: off this map
+}
+const fmtDec = p => `${p.lat.toFixed(5).replace('.', ',')}° N, ${p.lon.toFixed(5).replace('.', ',')}° E`;
+const point8 = g => ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'][Math.round(g / 45) % 8];
+const fmtKm = k => (k < 10 ? k.toFixed(1) : Math.round(k).toLocaleString('en-GB')) + ' km';
+const myDot = () => (store.dot ? { lat: store.dot[0], lon: store.dot[1] } : null);
+const fromDot = q => { const d = myDot(); if (!d) return ''; const g = bearing(d, q); return `${fmtKm(kmBetween(d, q))} · ${Math.round(g)}° ${point8(g)}`; };
+// On this map: inside its circle (section 6), which lies north of the equator and east of Greenwich.
+const onMap = p => !p.off && p.lat >= 0 && p.lat <= 90 && p.lon >= 0 && p.lon <= 180 && (w => Math.hypot(w[0] - CX, w[1] - CY) <= CR)(proj(p.lon, p.lat));
+// Asking an AI about a place: a prompt to paste into any AI app; its five-line reply goes in the same box.
+const AI_MARK = 'Reply with ONLY these five lines';
+const aiPrompt = place => `Where exactly is "${place}"? It is in Vietnam, China or a country near them.
+
+${AI_MARK}, in exactly this format, and nothing else:
+PLACE: its name in its own language (Vietnamese with tone marks; Chinese in characters, then pinyin), or else in English
+COORDINATES: its latitude and longitude in decimal degrees with 5 decimals, latitude first, written like 10,77252° N, 106,69802° E (that example is Bến Thành Market)
+ADDRESS: its street address
+NOTE: one short sentence on what it is
+SOURCE: where the coordinates come from (for example Google Maps, OpenStreetMap or Wikipedia)
+
+Give the coordinates of the place itself (its entrance or its centre), not of its district or province. If you are not sure where it is, write COORDINATES: unknown instead of guessing.`;
+function readAiReply(text) {           // reads what is put in the box: a coordinate, or an AI's reply
+  const t = String(text).replace(/\r/g, '').normalize('NFC');
+  if (t.includes(AI_MARK)) return { err: 'That is the prompt. Paste the AI’s reply instead.' };
+  const re = k => new RegExp(`^[ \\t>*_#•–—-]*(?:\\d+[.)][ \\t]*)?[*_]*(?:${k})[*_ \\t]*[:：][*_ \\t]*(.*)$`, 'im');
+  const field = k => { const m = t.match(re(k)); return m ? m[1].replace(/[*_`]+/g, '').trim() : null; };
+  const PLACE = 'PLACE|NAME|ĐỊA ĐIỂM|TÊN|地点|地點|名称|名稱', COORD = 'COORDINATES?|TỌA ĐỘ|TOẠ ĐỘ|坐标|坐標';
+  const NOTE = 'NOTE|GHI CHÚ|备注|備註', OTHER = `ADDRESS|ĐỊA CHỈ|${NOTE}|SOURCE|NGUỒN|地址|来源|來源`;
+  const labelled = re(`${PLACE}|${COORD}|${OTHER}`).test(t);
+  let p = null;
+  if (labelled) {
+    const c = field(COORD);
+    if (c !== null) {
+      if (!/\d/.test(c)) return { err: 'The AI didn’t give coordinates for this place.' };
+      if (!(p = readCoord(c))) return { err: 'Couldn’t read the COORDINATES line.' };
+    } else {
+      for (const line of t.split('\n')) if (/°|\d[.,]\d{3}/.test(line) && !re(`${PLACE}|${OTHER}`).test(line) && (p = readCoord(line))) break;
+      if (!p) return { err: 'No coordinates found in the reply.' };
+    }
+  } else if (!(p = readCoord(t.replace(/\n/g, ' ')))) {
+    return { err: /\n/.test(t) ? 'No coordinates found.' : 'Type it like 10,77252° N, 106,69802° E' };
+  }
+  if (!onMap(p)) return { err: 'That point is outside this map.' };
+  return { lat: p.lat, lon: p.lon, n: labelled ? field(PLACE) || '' : '', note: labelled ? field(NOTE) || '' : '' };
+}
+// Where a point is: the province of the 63 (with what it became on 1 July 2025, if it was merged),
+// China's unit, a neighbouring country, or the sea. Only as exact as the borders (about 0.7 km).
+const MERGED = new Set(PROV.filter(p => PROV.some(q => q !== p && q.to === p.to)).map(p => p.c));
+function whereIs(q) {
+  const w = proj(q.lon, q.lat), c = provinceAt(w);
+  if (c) { const p = U(c); return isCN(c) ? `${p.zh} ${p.py} (${p.en})` : MERGED.has(c) ? `${p.n} (since 2025 in ${p.to})` : p.n; }
+  const t = CTRS.find(t => w[0] >= t.fb[0] && w[1] >= t.fb[1] && w[0] <= t.fb[2] && w[1] <= t.fb[3] && measure.isPointInPath(t.path, w[0], w[1], 'evenodd'));
+  return t ? t.n : 'at sea';
+}
+// Show flies to about 150 km around a point: its province and the neighbours, the scale this map teaches.
+const SHOW_U = 150 / KU;
+const showPoint = w => flyTo([w[0] - SHOW_U / 2, w[1] - SHOW_U / 2, SHOW_U, SHOW_U], 1.04);
+
+// The picked place's highlight, in an SVG layer that moves with the map: Ping, Glow or Reticle. It
+// settles after 10 s, and is still from the start with Reduce Motion.
+let hlKey = '', hlRest = 0;
+const FX_NAMES = { ping: 'Ping', glow: 'Glow', reticle: 'Reticle' };
+function updateHL() {
+  const q = selPlace && view === 'learn' && !session && store.set.marks ? store.places.find(x => x.id === selPlace) : null;
+  const t = q && tagOf(q);
+  if (!q || !t || t.hidden) { if (hlKey) { hlKey = ''; hlG.innerHTML = ''; hlSvg.style.display = 'none'; clearTimeout(hlRest); } return; }
+  const fx = FX_NAMES[store.set.fx] ? store.set.fx : 'ping', d = myDot(), c = t.c;
+  const key = `${q.id}|${fx}|${c}|${d ? store.dot.join() : ''}`;
+  if (key !== hlKey) {
+    hlKey = key; clearTimeout(hlRest);
+    hlG.setAttribute('class', reduced ? 'rest' : '');
+    if (fx === 'ping') hlG.innerHTML = `<circle r="11" fill="${c}" opacity=".16"/>` + [1, 2, 3].map(i => `<circle class="ring r${i}" r="7" stroke="${c}"/>`).join('');
+    else if (fx === 'glow') hlG.innerHTML = `<circle class="glow" r="14" fill="${c}" filter="url(#hlBlur)"/><circle r="9.5" fill="none" stroke="#fff" stroke-width="2.6"/>`;
+    else {
+      const ticks = Array.from({ length: 12 }, (_, i) => { const a = i * Math.PI / 6, r2 = i % 3 ? 18.5 : 21; return `<line x1="${(Math.sin(a) * 15).toFixed(1)}" y1="${(-Math.cos(a) * 15).toFixed(1)}" x2="${(Math.sin(a) * r2).toFixed(1)}" y2="${(-Math.cos(a) * r2).toFixed(1)}"/>`; }).join('');
+      const B = 26, L = 7, br = [[-1, -1], [1, -1], [1, 1], [-1, 1]].map(([sx, sy]) => `<path d="M${sx * B} ${sy * (B - L)}V${sy * B}H${sx * (B - L)}"/>`).join('');
+      const g = d ? bearing(d, q) : 0;
+      hlG.innerHTML = `<g class="spin" stroke="${c}" stroke-width="1.4" fill="none"><circle r="15"/>${ticks}</g><g class="lock" stroke="${c}" stroke-width="2" fill="none" stroke-linecap="round">${br}</g>`
+        + (d ? `<text class="read" y="-34">${fmtKm(kmBetween(d, q))} · ${Math.round(g)}°</text>` : '');
+    }
+    hlSvg.style.display = '';
+    if (!reduced) hlRest = setTimeout(() => hlG.setAttribute('class', 'rest'), 10000);
+  }
+  const w = proj(q.lon, q.lat);
+  hlG.setAttribute('transform', `translate(${(com.x + pad.x + com.k * w[0]).toFixed(1)},${(com.y + pad.y + com.k * w[1]).toFixed(1)})`);
+}
+function placeAt(w) {                   // a shown saved place under the finger
+  let best = null, bd = 18;
+  for (const q of store.places) {
+    const t = tagOf(q); if (!t || t.hidden) continue;
+    const pw = proj(q.lon, q.lat), dpx = Math.hypot(pw[0] - w[0], pw[1] - w[1]) * cam.k;
+    if (dpx < bd) { bd = dpx; best = q; }
+  }
+  return best;
+}
+// A saved place picked: the map shows it and the red dot together, joined by a dashed line.
+function selectPlace(id) {
+  const q = store.places.find(x => x.id === id); if (!q) return;
+  const t = tagOf(q), d = myDot(), w = proj(q.lon, q.lat);
+  if (selected) select(null);
+  selPlace = id; store.set.marks = true; if (t) t.hidden = false; save(); invalidate(); closeSheet();
+  if (d) {
+    // Both points, never closer than Show goes, with room on screen for the highlight and the names
+    // (up to 50 px) and, at the bottom, for the message (up to 120 px).
+    const a = proj(d.lon, d.lat), r = freeRect(), ms = Math.min(50, r.w * .12), mt = Math.min(50, r.h * .12), mb = Math.min(120, r.h * .28);
+    const k = Math.min((r.w - 2 * ms) / Math.abs(a[0] - w[0]), (r.h - mt - mb) / Math.abs(a[1] - w[1]), camFor([0, 0, SHOW_U, SHOW_U], 1.04).k);
+    animateTo({ k, x: r.x + r.w / 2 - k * (a[0] + w[0]) / 2, y: r.y + mt + (r.h - mt - mb) / 2 - k * (a[1] + w[1]) / 2 }, 460);
+  } else showPoint(w);
+  toast(`${q.n} · ${d ? fromDot(q) : whereIs(q)}`, 4200);
+}
+// Export: a .json file of your tags and places (not the red dot). On the iPhone, the Share sheet.
+function exportPlaces() {
+  const data = JSON.stringify({ app: 'map-learning', kind: 'places', v: 1, exported: new Date().toISOString(), tags: store.tags, places: store.places }, null, 1);
+  const name = `map-learning-places-${new Date().toISOString().slice(0, 10)}.json`;
+  let file = null; try { file = new File([data], name, { type: 'application/json' }); } catch (e) { file = null; }
+  if (file && navigator.canShare && navigator.canShare({ files: [file] })) { navigator.share({ files: [file], title: name }).catch(() => {}); return; }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([data], { type: 'application/json' })); a.download = name;
+  document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+// Import: adds the places of such a file, of a full backup, or of HCMC Map's files, to yours; tags are
+// matched by name, and places already here or off this map are skipped.
+function importPlaces() {
+  const i = document.createElement('input'); i.type = 'file'; i.accept = 'application/json,.json';
+  i.onchange = () => {
+    const f = i.files[0]; if (!f) return;
+    f.text().then(txt => {
+      const s = JSON.parse(txt);
+      if (!s || !Array.isArray(s.places) || !(s.app === 'map-learning' || s.app === 'hcmc-map' || s.srs)) throw new Error('not a places file');
+      const ids = new Map(); let nt = 0, np = 0, skip = 0;
+      for (const t of Array.isArray(s.tags) ? s.tags : []) {
+        const tn = t && typeof t.n === 'string' ? t.n.trim().slice(0, 24) : ''; if (!tn) continue;
+        let m = store.tags.find(x => x.n.toLowerCase() === tn.toLowerCase());
+        if (!m && store.tags.length < 20) { m = { id: uid(), n: tn, c: PALETTE.includes(t.c) ? t.c : PALETTE[store.tags.length % PALETTE.length], hidden: false }; store.tags.push(m); nt++; }
+        if (m) ids.set(t.id, m.id);
+      }
+      for (const q of s.places) {
+        if (!q || typeof q.n !== 'string' || !Number.isFinite(q.lat) || !Number.isFinite(q.lon) || !onMap(q) || store.places.length >= 500) { skip++; continue; }
+        const pn = (q.n.trim() || `Place ${store.places.length + 1}`).slice(0, 60);
+        if (store.places.some(x => (x.n === pn || !q.n.trim()) && kmBetween(x, q) < 0.01)) { skip++; continue; }
+        store.places.push({ id: uid(), n: pn, lat: q.lat, lon: q.lon, tag: ids.get(q.tag) || ensureTag().id, note: typeof q.note === 'string' ? q.note.slice(0, 200) : '', at: typeof q.at === 'string' ? q.at.slice(0, 10) : '' });
+        np++;
+      }
+      save(); invalidate(); showCoords();
+      toast(`Imported ${np} place${np === 1 ? '' : 's'}${nt ? ` and ${nt} tag${nt === 1 ? '' : 's'}` : ''}${skip ? ` (${skip} already here or not on this map)` : ''}`, 3600);
+    }).catch(() => toast('That file is not a places file from this app or HCMC Map', 3200));
+  };
+  i.click();
+}
+function showCoords() {
+  cleanPlaces();
+  const d = myDot(), info = d && store.dotInfo, marks = !!store.set.marks;
+  const groups = store.tags.map(t => {
+    const ps = store.places.filter(q => q.tag === t.id);
+    return `<div class="tagrow"><span class="sw8" style="background:${t.c}"></span><button type="button" class="tagname" data-edit="${t.id}">${esc(t.n)} <span class="small">${ps.length}</span></button><button type="button" class="x eye" data-eye="${t.id}" aria-pressed="${!t.hidden}" aria-label="${t.hidden ? 'Show' : 'Hide'} ${esc(t.n)} on the map">${t.hidden ? EYE_OFF : EYE}</button></div>`
+      + ps.map(q => `<div class="prow"><button type="button" class="pgo" data-go="${q.id}"><span class="sw6" style="background:${t.c}"></span><span class="grow"><b>${esc(q.n)}</b><span class="small">${esc(d ? fromDot(q) : whereIs(q))}</span></span></button><button type="button" class="x" data-del="${q.id}" aria-label="Delete ${esc(q.n)}">${XICON}</button></div>`).join('');
+  }).join('');
+  openSheet(`<div class="row drag-row"><div class="grow"><h2>Coordinates</h2><div class="sub">Show puts your red dot there · Save place keeps it in a tag</div></div>${closeBtn('data-close')}</div>
+    <form class="answer" id="coordForm" autocomplete="off"><textarea id="coordIn" rows="1" inputmode="text" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go" aria-label="Coordinates, or an AI’s reply" placeholder="10,77252° N, 106,69802° E"></textarea><button type="submit" class="btn primary">Show</button></form>
+    <div class="btnrow"><button type="button" class="btn" id="saveOpen">Save place</button><button type="button" class="btn" id="marksBtn" aria-pressed="${marks}">${marks ? 'Hide markers' : 'Show markers'}</button></div>
+    <div id="saveForm" class="subform" hidden><div class="answer"><input id="saveName" type="text" maxlength="60" autocorrect="off" spellcheck="false" enterkeyhint="done" aria-label="Name of the place" placeholder="Name"></div>
+      <div class="btnrow"><select id="saveTag" class="pick" aria-label="Tag"></select><button type="button" class="btn primary" id="saveGo">Save</button><button type="button" class="btn" id="saveNo">Cancel</button></div></div>
+    ${d ? `<h3>You: the red dot</h3><div class="loc"><span class="grow">${info ? `<b>${esc(info.n)}</b> · ` : ''}${fmtDec(d)}<span class="small">${esc(whereIs(d))}</span></span><button type="button" class="btn" id="coordClr">Remove</button></div>` : ''}
+    <h3>Saved places (${store.places.length})</h3>
+    ${store.places.length ? `<div class="fxrow"><span class="small">Highlight</span><div class="seg" role="group" aria-label="Highlight for the picked place">${Object.keys(FX_NAMES).map(f => `<button type="button" data-fx="${f}" aria-pressed="${(FX_NAMES[store.set.fx] ? store.set.fx : 'ping') === f}">${FX_NAMES[f]}</button>`).join('')}</div></div>` : ''}
+    ${groups || '<p class="small">None yet. Type a coordinate or paste an AI’s reply above, then tap Save place.</p>'}
+    <div id="tagForm" class="subform" hidden><div class="answer"><input id="tagName" type="text" maxlength="24" autocorrect="off" spellcheck="false" enterkeyhint="done" aria-label="Tag name" placeholder="Tag name, e.g. Travel"></div>
+      <div class="palette">${PALETTE.map(c => `<button type="button" class="swatch" data-c="${c}" style="background:${c}" aria-label="Colour ${c}"></button>`).join('')}</div>
+      <div class="btnrow"><button type="button" class="btn primary" id="tagGo">Add tag</button><button type="button" class="btn" id="tagDel" hidden>Delete tag</button><button type="button" class="btn" id="tagNo">Cancel</button></div></div>
+    <div class="btnrow"><button type="button" class="btn" id="tagNew">New tag</button><button type="button" class="btn" id="plExport"${store.places.length ? '' : ' disabled'}>Export</button><button type="button" class="btn" id="plImport">Import</button></div>
+    <h3>Ask an AI about a place</h3>
+    <form class="answer" id="aiForm" autocomplete="off"><input id="aiPlace" type="text" inputmode="text" autocorrect="off" spellcheck="false" enterkeyhint="done" aria-label="Place to ask about" placeholder="e.g. Văn Miếu, Hà Nội"><button type="submit" class="btn">Copy prompt</button></form>
+    ${navigator.share ? '<div class="btnrow"><button type="button" class="btn" id="aiShare">Share the prompt…</button></div>' : ''}
+    <p class="small">Send the prompt to any AI app, copy its whole reply and paste it in the box above. An AI’s coordinates can be off, sometimes by kilometres.</p>
+    <p class="small">The point must lie inside the map’s circle. A bigger first number (latitude) is further north; a bigger second number (longitude) is further east. The borders here are drawn to about 0.7 km, so a place within about 1 km of a border or the coast can show in the province next door.</p>
+    <p class="small">Your red dot, tags and places are kept on this phone only (and in your backup file). Export makes a file of your tags and places (not the red dot); Import also takes HCMC Map’s files.</p>`, true);
+  sheetBody.querySelector('[data-close]').onclick = closeSheet;
+  const redraw = () => { const st = sheetBody.scrollTop; showCoords(); sheetBody.scrollTop = st; };
+  const box = $('coordIn'), grow = () => { box.style.height = 'auto'; box.style.height = Math.min(box.scrollHeight + 2, innerHeight * .38) + 'px'; };
+  box.addEventListener('input', grow); grow();
+  box.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); showCoord(box.value); } });
+  $('coordForm').onsubmit = e => { e.preventDefault(); showCoord(box.value); };
+  $('marksBtn').onclick = () => {
+    store.set.marks = !store.set.marks; save(); invalidate();
+    const b = $('marksBtn'); b.textContent = store.set.marks ? 'Hide markers' : 'Show markers'; b.setAttribute('aria-pressed', String(store.set.marks));
+  };
+  const clr = $('coordClr');
+  if (clr) clr.onclick = () => { store.dot = null; store.dotInfo = null; save(); invalidate(); redraw(); toast('Red dot removed'); };
+  // Save place: the point in the box, or the red dot when the box is empty (read again at Save).
+  const pointToSave = () => {
+    const t = box.value.trim();
+    if (t) return readAiReply(t);
+    const dd = myDot(), inf = dd && store.dotInfo;
+    return dd ? { lat: dd.lat, lon: dd.lon, n: inf ? inf.n : '', note: inf ? inf.note : '' } : { err: 'Type a coordinate or paste an AI’s reply first' };
+  };
+  $('saveOpen').onclick = () => {
+    const pt = pointToSave(); if (pt.err) return toast(pt.err, 3200);
+    const last = store.tags.some(x => x.id === store.set.lastTag) ? store.set.lastTag : store.tags.length ? store.tags[0].id : '';
+    $('saveTag').innerHTML = store.tags.length ? store.tags.map(x => `<option value="${x.id}"${x.id === last ? ' selected' : ''}>${esc(x.n)}</option>`).join('') : '<option value="">Saved</option>';
+    $('saveName').value = pt.n || ''; $('saveForm').hidden = false; $('saveName').focus();
+  };
+  $('saveNo').onclick = () => { $('saveForm').hidden = true; };
+  $('saveGo').onclick = () => {
+    const pt = pointToSave(); if (pt.err) return toast(pt.err, 3200);
+    if (store.places.length >= 500) return toast('Your list is full (500 places)', 3000);
+    const n = $('saveName').value.trim().slice(0, 60) || `Place ${store.places.length + 1}`;
+    if (store.places.some(x => x.n === n && kmBetween(x, pt) < 0.01)) return toast('Already saved', 2400);
+    const tag = store.tags.some(x => x.id === $('saveTag').value) ? $('saveTag').value : ensureTag().id;
+    store.places.push({ id: uid(), n, lat: +pt.lat.toFixed(6), lon: +pt.lon.toFixed(6), tag, note: pt.note || '', at: new Date().toISOString().slice(0, 10) });
+    store.set.lastTag = tag; store.set.marks = true; save(); invalidate(); redraw();
+    toast(`Saved to ${(store.tags.find(x => x.id === tag) || { n: 'your places' }).n}`, 2400);
+  };
+  // Tags: add, rename or recolour, delete (with its places), and show or hide each on the map.
+  let editing = null, colour = PALETTE[0];
+  const pickColour = c => { colour = c; sheetBody.querySelectorAll('.swatch').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.c === c))); };
+  sheetBody.querySelectorAll('.swatch').forEach(b => b.onclick = () => pickColour(b.dataset.c));
+  const openTagForm = t => {
+    editing = t || null; $('tagName').value = t ? t.n : ''; $('tagGo').textContent = t ? 'Save tag' : 'Add tag'; $('tagDel').hidden = !t;
+    pickColour(t ? t.c : (PALETTE.find(c => !store.tags.some(x => x.c === c)) || PALETTE[0])); $('tagForm').hidden = false; $('tagName').focus();
+  };
+  $('tagNew').onclick = () => { if (store.tags.length >= 20) return toast('Up to 20 tags', 2400); openTagForm(null); };
+  sheetBody.querySelectorAll('[data-edit]').forEach(b => b.onclick = () => openTagForm(store.tags.find(x => x.id === b.dataset.edit)));
+  $('tagNo').onclick = () => { $('tagForm').hidden = true; editing = null; };
+  $('tagGo').onclick = () => {
+    const n = $('tagName').value.trim().slice(0, 24);
+    if (!n) return toast('Give the tag a name', 2400);
+    if (store.tags.some(x => x !== editing && x.n.toLowerCase() === n.toLowerCase())) return toast('There is already a tag with that name', 2600);
+    if (editing) { editing.n = n; editing.c = colour; } else store.tags.push({ id: uid(), n, c: colour, hidden: false });
+    save(); invalidate(); redraw();
+  };
+  $('tagDel').onclick = () => {
+    const t = editing; if (!t) return;
+    const k = store.places.filter(x => x.tag === t.id).length;
+    if (!confirmInline('tag' + t.id, k ? `Tap Delete tag again to delete it and its ${k} place${k > 1 ? 's' : ''}` : 'Tap Delete tag again to delete it')) return;
+    store.tags = store.tags.filter(x => x !== t); store.places = store.places.filter(x => x.tag !== t.id);
+    if (selPlace && !store.places.some(x => x.id === selPlace)) selPlace = null;
+    save(); invalidate(); redraw();
+  };
+  sheetBody.querySelectorAll('[data-eye]').forEach(b => b.onclick = () => {
+    const t = store.tags.find(x => x.id === b.dataset.eye); if (!t) return;
+    t.hidden = !t.hidden; save(); invalidate();
+    b.innerHTML = t.hidden ? EYE_OFF : EYE; b.setAttribute('aria-pressed', String(!t.hidden)); b.setAttribute('aria-label', `${t.hidden ? 'Show' : 'Hide'} ${t.n} on the map`);
+  });
+  sheetBody.querySelectorAll('[data-go]').forEach(b => b.onclick = () => selectPlace(b.dataset.go));
+  sheetBody.querySelectorAll('[data-del]').forEach(b => b.onclick = () => {
+    const q = store.places.find(x => x.id === b.dataset.del); if (!q) return;
+    if (!confirmInline('pl' + q.id, `Tap ✕ again to delete ${q.n}`)) return;
+    store.places = store.places.filter(x => x !== q); if (selPlace === q.id) selPlace = null;
+    save(); invalidate(); redraw();
+  });
+  $('plExport').onclick = exportPlaces; $('plImport').onclick = importPlaces;
+  sheetBody.querySelectorAll('[data-fx]').forEach(b => b.onclick = () => {
+    store.set.fx = b.dataset.fx; save(); invalidate();
+    sheetBody.querySelectorAll('[data-fx]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    if (!selPlace) toast(`${FX_NAMES[b.dataset.fx]}: it shows when you pick a place`, 2600);
+  });
+  const prompt = () => { const q = $('aiPlace').value.trim(); if (!q) { toast('Type a place first'); return null; } return aiPrompt(q); };
+  $('aiForm').onsubmit = e => { e.preventDefault(); const t = prompt(); if (t) copyText(t).then(ok => toast(ok ? 'Prompt copied. Paste it into any AI app.' : 'Couldn’t copy. Try Share.', 3200)); };
+  const share = $('aiShare');
+  if (share) share.onclick = () => { const t = prompt(); if (t) navigator.share({ text: t }).catch(() => {}); };
+}
+// A typed coordinate, or an AI's reply: the red dot goes there.
+function showCoord(text) {
+  const t = String(text).trim();
+  if (!t) return toast('Type a coordinate or paste an AI’s reply first', 3000);
+  const p = readAiReply(t);
+  if (p.err) return toast(p.err, 3200);
+  const info = p.n ? { n: p.n, note: p.note } : null;
+  store.dot = [+p.lat.toFixed(6), +p.lon.toFixed(6)]; store.dotInfo = info; store.set.marks = true; save(); invalidate();
+  if (document.activeElement && document.activeElement.blur) document.activeElement.blur();   // the keyboard goes before the map flies
+  closeSheet(); showPoint(proj(p.lon, p.lat));
+  toast(`${info ? info.n : fmtDec(p)} · ${whereIs(p)}`, 3600);
+}
+// Copy inside the tap (iOS allows the clipboard only then), with the old way as a fallback.
+function copyText(text) {
+  const legacy = () => {
+    const ta = document.createElement('textarea'); ta.value = text; ta.setAttribute('readonly', '');
+    Object.assign(ta.style, { position: 'fixed', top: '0', left: '0', opacity: '0', fontSize: '16px' });
+    document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, text.length);
+    let ok = false; try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    ta.remove(); return ok;
+  };
+  if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text).then(() => true, legacy);
+  return Promise.resolve(legacy());
+}
+$('coordb').onclick = () => { if (selected) select(null); showCoords(); };
 
 /* ---------- 13. Practice sessions ---------- */
 const MODES = [

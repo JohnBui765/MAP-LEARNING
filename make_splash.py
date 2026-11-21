@@ -6,8 +6,8 @@ Needs Pillow. Writes splash-*.png and replaces the block between
 <!--STARTUP--> and <!--/STARTUP--> in index.html.
 
 Each screen is the app's sea colour with the icon in the middle, as iOS shows it while the
-app opens. iOS picks the image whose media query matches the phone; dark variants follow
-the light ones, which iOS uses when the phone is in dark mode at install time.
+app opens. iOS picks the image whose media query matches the phone. The app is light only,
+so there is one screen per phone, whatever the phone's appearance setting.
 """
 import sys
 from pathlib import Path
@@ -20,7 +20,7 @@ SCREENS = [
     (375, 667, 2), (414, 896, 2), (375, 812, 3), (414, 896, 3), (390, 844, 3), (428, 926, 3),
     (393, 852, 3), (430, 932, 3), (402, 874, 3), (440, 956, 3), (420, 912, 3),
 ]
-THEMES = {'light': (0xcf, 0xe6, 0xf0), 'dark': (0x0f, 0x25, 0x33)}
+THEMES = {'light': (0xcf, 0xe6, 0xf0)}
 ICON_PT = 120          # icon size in points, about what iOS uses on its own launch screens
 
 

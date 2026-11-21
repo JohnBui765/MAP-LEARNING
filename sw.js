@@ -2,7 +2,7 @@
 // All the owner's apps share one origin (johnbui765.github.io), so this worker only ever opens or
 // deletes caches whose names start with PREFIX, and looks files up in its own cache only.
 const PREFIX = 'map-learning-';
-const VERSION = PREFIX + 'v3';
+const VERSION = PREFIX + 'v4';
 const ASSETS = [
   "./",
   "./index.html",

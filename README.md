@@ -13,6 +13,11 @@ Address: **https://johnbui765.github.io/MAP-LEARNING/**
   whatever does not fit waits until you zoom in. Small provinces show their Atlat number.
 - **Made for fingers:** pinch, double-tap to zoom in, two-finger tap to zoom out, flick to
   glide. If a tap could mean more than one small province, the map zooms in instead of guessing.
+- **Clean view.** The eye button above + and − at the bottom right (or H on a keyboard) hides the
+  controls: the top card, the region chips, the zoom and ⤢ buttons and the tab bar. The map, its
+  taps and its cards keep working, and a practice question stays on screen. Tap the eye again, now
+  in the bottom right corner, to bring the controls back.
+- **Light only.** The map stays light even when the phone or the browser is set to dark mode.
 - **China is the second country to learn**, in its six regions as the China Statistical Yearbook
   groups them (North, Northeast, East, South Central, Southwest, Northwest) plus Hong Kong, Macau
   and Taiwan. Every mode works for China: Daily review, Find it, Name it, Neighbours, Rebuild and
@@ -56,8 +61,11 @@ exactly as above.
 - **iPhone:** open the link in Safari, tap Share, then "Add to Home Screen".
 - **Laptop:** open the link in Chrome or Edge and click the install icon in the address bar.
 
-After the first visit it works without internet. If you installed an older version, remove it
-from the Home Screen and add it again so iOS picks up the new icon and launch screen.
+After the first visit it works without internet. A phone that has an older version installed picks
+up this one the next time the app is opened online (the cache is now `map-learning-v4`); progress is
+kept. iOS keeps the launch screen it saved when the app was added (a dark one, if the phone was in
+dark mode then). To replace it, first back up your progress (Progress, then Details), then remove
+the app from the Home Screen, add it again and restore: removing the app can erase what it saved.
 
 ## Your progress
 
@@ -68,7 +76,7 @@ progress, and the old backup files are accepted.
 
 ## After editing any file
 
-Change `VERSION` at the top of `sw.js` (for example to `PREFIX + 'v3'`). Otherwise installed
+Change `VERSION` at the top of `sw.js` (for example to `PREFIX + 'v5'`). Otherwise installed
 copies keep showing the cached version.
 
 ## Rebuilding the map data
